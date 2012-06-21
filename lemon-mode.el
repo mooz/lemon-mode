@@ -128,5 +128,7 @@
 (lemon-define-derived-mode c++-mode "C++")
 (lemon-define-derived-mode c-mode "C")
 
+(defalias 'lemon-mode 'lemon-c-mode)
+
 (provide 'lemon-mode)
 ;;; lemon-mode.el ends here
