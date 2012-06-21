@@ -67,34 +67,31 @@
 
 ;; Indentation support
 
-(defun lemon-looking-at-block-end ()
-  (save-excursion
-    (condition-case nil
-        (progn
-          (beginning-of-line)
-          (search-forward "}" (line-end-position))
-          (let (parse-sexp-ignore-comments)
-            (goto-char (1+ (scan-lists (point) -1 0)))
-            (looking-back "\\(\\.\\|%[a-z_]+\\)[ \t]*{")))
-      (error nil))))
-
 (defun lemon-inside-block-p ()
   "Returns true if `point' is placed between '{' and '}'"
   (save-excursion
-    (and (re-search-backward "\\({\\|}\\)" (point-min) t)
-         (or (looking-at "{")
-             (progn (goto-char (scan-lists (1+ (point)) -1 0))
-                    (lemon-inside-block-p))))))
+    (let (parse-sexp-ignore-comments)
+      (and (re-search-backward "\\({\\|}\\)" (point-min) t)
+           (or (looking-at "{")
+               (progn (goto-char (scan-lists (1+ (point)) -1 0))
+                      (lemon-inside-block-p)))))))
+
+(defun lemon-beginning-of-block ()
+  (when (lemon-inside-block-p)
+    (and (re-search-backward "\\(\\.\\|%[a-z_]+\\)[ \t]*{" (point-min) t)
+         (re-search-forward "{" (point-max) t)
+         (backward-char))))
 
 (defun lemon-indent-line (&optional syntax quiet ignore-point-pos)
   (cond
-   ((lemon-looking-at-block-end)
-    ;; On block end
-    (indent-line-to 0))
    ((lemon-inside-block-p)
     ;; Use C-style indentation
-    (let ((major-mode lemon-base-mode))
-      (c-indent-line syntax quiet ignore-point-pos)))
+      (save-restriction
+        (save-excursion
+          (narrow-to-region (progn (lemon-beginning-of-block) (point))
+                            (progn (forward-list) (point))))
+        (let ((major-mode lemon-base-mode))
+          (c-indent-line syntax quiet ignore-point-pos))))
    (t
     ;; Otherwise, use lemon-style indentation
     ;; (FIXME: Currently, indentation is fixed to 0)
