@@ -91,9 +91,6 @@
     ;; (FIXME: Currently, indentation is fixed to 0)
     (indent-line-to 0))))
 
-(defun lemon-indent-region (start end &optional quiet)
-  (c-indent-region start end quiet))
-
 ;; Arrange keymap
 
 (defvar lemon-mode-map (make-sparse-keymap))
@@ -110,7 +107,7 @@
   (make-local-variable 'indent-line-function)
   (setq indent-line-function 'lemon-indent-line)
   (make-local-variable 'indent-region-function)
-  (setq indent-region-function 'lemon-indent-region)
+  (setq indent-region-function nil)
 
   (use-local-map lemon-mode-map)
 
