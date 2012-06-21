@@ -1,0 +1,36 @@
+* Lemon mode
+
+A major mode for editing LEMON Parser Generator grammar files.
+
+** What's this?
+
+[[http://www.hwaci.com/sw/lemon/][Lemon]] is a simple but very powerful parser generator for C/C++. This
+major mode will help you for editing Lemon's grammar files in the
+Emacs editor.
+
+Two major mode =lemon-c-mode= and =lemon-c++-mode=, which
+lemon-mode.el provides, allow you to explicitly specify the base
+editing mode that affects syntax highlighting and indentation
+mechanism.
+
+** Usage
+
+Place =lemon-mode.el= in a directory in your emacs's =load-path=.
+
+#+begin_src lisp
+(require 'lemon-mode)
+#+end_src
+
+Then invoke =lemon-mode= (which is identical to =lemon-c-mode=) in the
+buffer where lemon grammar file is extracted.
+
+Optionally, you can bind lemon-mode to the files with certain
+extensions.
+
+#+begin_src lisp
+(add-to-list 'auto-mode-alist '("\\.y$" . lemon-mode))
+#+end_src
+
+** References
+
+- LEMON Parser Generator ([[http://www.hwaci.com/sw/lemon/]])
