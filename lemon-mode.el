@@ -30,6 +30,12 @@
 (require 'font-lock)
 (require 'cc-mode)
 
+;; Misc variables
+
+(defvar lemon-base-mode)
+
+;; Syntax highlight support
+
 (defvar lemon-syntax-capture "([A-Z][A-Z0-9]*)")
 
 (defvar lemon-syntax-terminal-symbol
@@ -85,7 +91,8 @@
     (indent-line-to 0))
    ((and (lemon-inside-block-p))
     ;; Use C-style indentation
-    (c-indent-line syntax quiet ignore-point-pos))
+    (let ((major-mode lemon-base-mode))
+      (c-indent-line syntax quiet ignore-point-pos)))
    (t
     ;; Otherwise, use lemon-style indentation
     ;; (FIXME: Currently, indentation is fixed to 0)
@@ -95,25 +102,31 @@
 
 (defvar lemon-mode-map (make-sparse-keymap))
 
-;; TODO: adaptively switch c++-mode and c-mode
-;;;###autoload
-(define-derived-mode lemon-mode c++-mode
-  "Lemon"
-  "Major mode for editing lemon grammar files"
-  (setq mode-name "Lemon")
-  (setq major-mode 'lemon-mode)
+(defmacro lemon-define-derived-mode (base-mode base-mode-name)
+  (let ((derived-mode
+         (intern (concat "lemon-" (symbol-name base-mode))))
+        (derived-mode-name
+         (concat "Lemon/" base-mode-name)))
+    `(define-derived-mode ,derived-mode ,base-mode
+       ,derived-mode-name
+       "Major mode for editing lemon grammar files"
+       (setq mode-name ,derived-mode-name)
+       (setq major-mode (quote ,derived-mode))
+       ;; Indentation
+       (make-local-variable 'indent-line-function)
+       (setq indent-line-function 'lemon-indent-line)
+       (make-local-variable 'indent-region-function)
+       (setq indent-region-function nil)
+       ;; Record base mode (for correct indentation)
+       (make-local-variable 'lemon-derived-mode)
+       (setq lemon-base-mode (quote ,base-mode))
+       ;; Keymap
+       (use-local-map lemon-mode-map)
+       ;; Syntax highlight
+       (font-lock-add-keywords nil lemon-font-lock-keywords))))
 
-  ;; Indentation
-  (make-local-variable 'indent-line-function)
-  (setq indent-line-function 'lemon-indent-line)
-  (make-local-variable 'indent-region-function)
-  (setq indent-region-function nil)
-
-  (use-local-map lemon-mode-map)
-
-  ;; Inherit c++-mode
-  (font-lock-add-keywords nil lemon-font-lock-keywords)
-  )
+(lemon-define-derived-mode c++-mode "C++")
+(lemon-define-derived-mode c-mode "C")
 
 (provide 'lemon-mode)
 ;;; lemon-mode.el ends here
