@@ -79,17 +79,19 @@
       (error nil))))
 
 (defun lemon-inside-block-p ()
+  "Returns true if `point' is placed between '{' and '}'"
   (save-excursion
-    (beginning-of-line)
     (and (re-search-backward "\\({\\|}\\)" (point-min) t)
-         (looking-at "{"))))
+         (or (looking-at "{")
+             (progn (goto-char (scan-lists (1+ (point)) -1 0))
+                    (lemon-inside-block-p))))))
 
 (defun lemon-indent-line (&optional syntax quiet ignore-point-pos)
   (cond
    ((lemon-looking-at-block-end)
     ;; On block end
     (indent-line-to 0))
-   ((and (lemon-inside-block-p))
+   ((lemon-inside-block-p)
     ;; Use C-style indentation
     (let ((major-mode lemon-base-mode))
       (c-indent-line syntax quiet ignore-point-pos)))
