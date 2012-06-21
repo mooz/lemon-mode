@@ -71,14 +71,17 @@
   "Returns true if `point' is placed between '{' and '}'"
   (save-excursion
     (let (parse-sexp-ignore-comments)
-      (and (re-search-backward "\\({\\|}\\)" (point-min) t)
-           (or (looking-at "{")
-               (progn (goto-char (scan-lists (1+ (point)) -1 0))
-                      (lemon-inside-block-p)))))))
+      (catch 'return
+        (while t
+          (unless (re-search-backward "\\({\\|}\\)" (point-min) t)
+            (throw 'return nil))
+          (when (looking-at "{")
+            (throw 'return t))
+          (goto-char (scan-lists (1+ (point)) -1 0)))))))
 
 (defun lemon-beginning-of-block ()
   (when (lemon-inside-block-p)
-    (and (re-search-backward "\\(\\.\\|%[a-z_]+\\)[ \t]*{" (point-min) t)
+    (and (re-search-backward "\\(\\.\\|\\[[A-Z_]+\\]\\|%[a-z_]+\\)[ \t]*{" (point-min) t)
          (re-search-forward "{" (point-max) t)
          (backward-char))))
 
