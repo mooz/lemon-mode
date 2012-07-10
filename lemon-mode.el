@@ -98,7 +98,19 @@
    (t
     ;; Otherwise, use lemon-style indentation
     ;; (FIXME: Currently, indentation is fixed to 0)
-    (indent-line-to 0))))
+    (lemon-indent-line-lemon 0))))
+
+(defun lemon-current-indentation ()
+  (save-excursion
+    (back-to-indentation)
+    (current-column)))
+
+(defun lemon-indent-line-lemon (column)
+  (let ((offset (current-column))
+        (indentation-before (lemon-current-indentation)))
+    (indent-line-to column)
+    (let ((delta (- offset indentation-before)))
+      (forward-char (max 0 delta)))))
 
 ;; Arrange keymap
 
