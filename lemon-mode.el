@@ -81,7 +81,7 @@
 
 (defun lemon-beginning-of-block ()
   (when (lemon-inside-block-p)
-    (and (re-search-backward "\\(\\.\\|\\[[A-Z_]+\\]\\|%[a-z_]+\\)[ \t]*{" (point-min) t)
+    (and (re-search-backward "\\(\\.\\|\\[[A-Z_]+\\]\\|%[a-z_]+\\([ \t\n\r]+[a-z_]+\\)?\\)[ \t\n\r]*{" (point-min) t)
          (re-search-forward "{" (point-max) t)
          (backward-char))))
 
