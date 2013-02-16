@@ -151,5 +151,9 @@
 
 (defalias 'lemon-mode 'lemon-c-mode)
 
+;;;###autoload (autoload 'lemon-c++-mode "lemon-mode" nil t)
+;;;###autoload (autoload 'lemon-c-mode "lemon-mode" nil t)
+;;;###autoload (autoload 'lemon-mode "lemon-mode" nil t)
+
 (provide 'lemon-mode)
 ;;; lemon-mode.el ends here
