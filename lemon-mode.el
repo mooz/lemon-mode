@@ -1,6 +1,6 @@
-;;; lemon-mode.el --- Major mode for editing lemon grammar files
+;;; lemon-mode.el --- A major mode for editing lemon grammar files
 
-;; Copyright (C) 2012  mooz
+;; Copyright (C) 2012, 2013  mooz
 
 ;; Author: mooz <stillpedant@gmail.com>
 ;; Keywords: lemon
@@ -20,9 +20,16 @@
 
 ;;; Commentary:
 
-;; A major mode for editing LEMON Parser Generator grammar files
-;; .
-;; LEMON Parser Generator <http://www.hwaci.com/sw/lemon/>
+;; A major mode for editing LEMON Parser Generator grammar files.
+;;
+;; Lemon <http://www.hwaci.com/sw/lemon/> is a simple but very
+;; powerful parser generator for C/C++. This major mode helps you edit
+;; Lemon's grammar files in Emacs.
+;;
+;; lemon-mode.el provides two major modes (1) `lemon-c-mode' and (2)
+;; `lemon-c++-mode', which allow you to explicitly specify the base
+;; editing mode. The base editing mode affects syntax highlighting and
+;; indentation mechanism.
 ;;
 
 ;;; Code:
